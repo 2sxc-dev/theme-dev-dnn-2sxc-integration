@@ -43,7 +43,8 @@
     var siteDc = SiteDynCode;
     var toolbarSvc = this.GetService<IToolbarService>();
     var page = SiteDynCode.CmsContext.Page;
-    var pageTlb = toolbarSvc.Metadata(page, "PageMetadata", parameters: "context:zoneId=169&context:appId=1803");
+    var siteApp = SiteDynCode.CmsContext.Site.App;
+    var pageTlb = toolbarSvc.Metadata(page, "PageMetadata", parameters: "context:zoneId=" + siteApp.ZoneId + "&context:appId=" + siteApp.AppId);
     return siteDc.Edit.Toolbar(toolbar: pageTlb);
   }
 </script>
