@@ -54,7 +54,8 @@ Typeof: <%= this.GetType().BaseType.BaseType %>
 <hr>
 Toolbar: <%= SiteDynCode.Edit.Enabled %>
 <hr>
-Page: <%# SiteDynCode.CmsContext.Page.Id %> / <%# SiteDynCode.CmsContext.Page.Url %> / <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %>
+Page: <%# SiteDynCode.CmsContext.Page.Id %> / <%# SiteDynCode.CmsContext.Page.Url %> / <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %> 
+ / Icon: <%# (SiteDynCode.CmsContext.Page.Metadata as dynamic).Icon %>
 
 <hr>
 Toolbar: <%= PageToolbar().ToString() %>
