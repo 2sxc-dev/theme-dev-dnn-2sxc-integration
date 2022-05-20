@@ -23,6 +23,47 @@
 <%@ Register TagPrefix="tosic" TagName="SxcQuickEdit" src="2sxc-quickedit.ascx" %>
 <tosic:SxcQuickEdit runat="server" />
 
+
+<%-- New code to use 2sxc --%>
+<%@ Import Namespace="ToSic.Sxc.Dnn" %>
+<%@ Import Namespace="ToSic.Sxc.Services" %>
+<%@ Import Namespace="ToSic.Sxc.Code" %>
+<%@ Import Namespace="System.Linq" %>
+<script runat="server">
+  private IDynamicCode Test() {
+    var dynCodeSvc = this.GetService<IDynamicCodeService>();
+    var siteApp = dynCodeSvc.OfSite();
+    return siteApp;
+  }
+
+  protected IDynamicCode SiteDynCode { get { return _siteDynCode ?? (_siteDynCode = Test()); } }
+  private IDynamicCode _siteDynCode;
+
+  private object PageToolbar() {
+    var siteDc = SiteDynCode;
+    var toolbarSvc = this.GetService<IToolbarService>();
+    var page = SiteDynCode.CmsContext.Page;
+    var pageTlb = toolbarSvc.Metadata(page, "PageMetadata", parameters: "context:zoneId=169&context:appId=1803");
+    return siteDc.Edit.Toolbar(toolbar: pageTlb);
+  }
+</script>
+MDEntityId: <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %>
+<br>
+Typeof: <%= this.GetType().BaseType.BaseType %>
+<hr>
+Toolbar: <%= SiteDynCode.Edit.Enabled %>
+<hr>
+Page: <%# SiteDynCode.CmsContext.Page.Id %> / <%# SiteDynCode.CmsContext.Page.Url %> / <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %>
+
+<hr>
+Toolbar: <%= PageToolbar().ToString() %>
+
+<br>
+<br>
+<br>
+<hr>
+<%-- end --%>
+
 <a class="visually-hidden-focusable" rel="nofollow" href="#to-shine-page-main"><%= LocalizeString("SkipLink.MainContent") %></a>
 <header id="to-shine-page-header">
   <div class="container d-flex justify-content-between align-items-center py-3">			
