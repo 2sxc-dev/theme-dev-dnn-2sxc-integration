@@ -30,22 +30,19 @@
 <%@ Import Namespace="ToSic.Sxc.Code" %>
 <%@ Import Namespace="System.Linq" %>
 <script runat="server">
-  private IDynamicCode Test() {
-    var dynCodeSvc = this.GetService<IDynamicCodeService>();
-    var siteApp = dynCodeSvc.OfSite();
-    return siteApp;
-  }
-
-  protected IDynamicCode SiteDynCode { get { return _siteDynCode ?? (_siteDynCode = Test()); } }
+  protected IDynamicCode SiteDynCode { get { return _siteDynCode ?? (_siteDynCode = this.GetService<IDynamicCodeService>().OfSite()); } }
   private IDynamicCode _siteDynCode;
 
   private object PageToolbar() {
-    var siteDc = SiteDynCode;
     var toolbarSvc = this.GetService<IToolbarService>();
-    var page = SiteDynCode.CmsContext.Page;
-    var siteApp = SiteDynCode.CmsContext.Site.App;
-    var pageTlb = toolbarSvc.Metadata(page, "PageMetadata", parameters: "context:zoneId=" + siteApp.ZoneId + "&context:appId=" + siteApp.AppId);
-    return siteDc.Edit.Toolbar(toolbar: pageTlb);
+    var pageTlb = toolbarSvc.Metadata(SiteDynCode.CmsContext.Page, "PageMetadata");
+    return SiteDynCode.Edit.Toolbar(pageTlb);
+  }
+
+  private void SetOpenGraph() {
+    var pageMd = SiteDynCode.CmsContext.Page.Metadata as dynamic;
+    var pageSvc = this.GetService<IPageService>();
+    pageSvc.AddOpenGraph("og:title", pageMd.Title);
   }
 </script>
 MDEntityId: <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %>
@@ -58,7 +55,7 @@ Page: <%# SiteDynCode.CmsContext.Page.Id %> / <%# SiteDynCode.CmsContext.Page.Ur
  / Icon: <%# (SiteDynCode.CmsContext.Page.Metadata as dynamic).Icon %>
 
 <hr>
-Toolbar: <%= PageToolbar().ToString() %>
+Toolbar: <%= PageToolbar() %>
 
 <br>
 <br>
