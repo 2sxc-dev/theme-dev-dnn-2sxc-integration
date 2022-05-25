@@ -35,14 +35,16 @@
 
   private object PageToolbar() {
     var toolbarSvc = this.GetService<IToolbarService>();
-    var pageTlb = toolbarSvc.Metadata(SiteDynCode.CmsContext.Page, "PageMetadata");
+    var pageTlb = toolbarSvc.Metadata(SiteDynCode.CmsContext.Page, "PageMetadata", ui: "icon=svg:PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHdpZHRoPSI0OCI+PHBhdGggZD0iTTkgMzlIMjlWMjlIMzlWOVEzOSA5IDM5IDlRMzkgOSAzOSA5SDlROSA5IDkgOVE5IDkgOSA5VjM5UTkgMzkgOSAzOVE5IDM5IDkgMzlaTTkgNDJRNy43NSA0MiA2Ljg3NSA0MS4xMjVRNiA0MC4yNSA2IDM5VjlRNiA3Ljc1IDYuODc1IDYuODc1UTcuNzUgNiA5IDZIMzlRNDAuMjUgNiA0MS4xMjUgNi44NzVRNDIgNy43NSA0MiA5VjMwTDMwIDQyWk0xNSAyN1YyNEgyMy41VjI3Wk0xNSAxOVYxNkgzM1YxOVpNOSAzOVYyOVY5UTkgOSA5IDlROSA5IDkgOVE5IDkgOSA5UTkgOSA5IDlWMzlROSAzOSA5IDM5UTkgMzkgOSAzOVoiLz48L3N2Zz4=");
     return SiteDynCode.Edit.Toolbar(pageTlb);
   }
 
   private void SetOpenGraph() {
     var pageMd = SiteDynCode.CmsContext.Page.Metadata as dynamic;
-    var pageSvc = this.GetService<IPageService>();
+    var pageSvc = SiteDynCode.GetService<IPageService>();
     pageSvc.AddOpenGraph("og:title", pageMd.Title);
+
+    pageSvc.Activate("fancybox4");
   }
 </script>
 MDEntityId: <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %>
@@ -210,6 +212,7 @@ Toolbar: <%= PageToolbar() %>
     base.OnLoad(e);
     AttachCustomHeader("<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no' />");
 
+    SetOpenGraph();
     // Set various FavIcon and Icon headers according to best practices
     // The next line is disabled by default, because it requires RazorBlade to be installed.
     // How to install RazorBlade 3: https://azing.org/dnn-community/r/zbh8JC5T
