@@ -35,7 +35,11 @@
 
   private object PageToolbar() {
     var toolbarSvc = this.GetService<IToolbarService>();
-    var pageTlb = toolbarSvc.Metadata(SiteDynCode.CmsContext.Page, "PageMetadata", ui: "icon=svg:PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHdpZHRoPSI0OCI+PHBhdGggZD0iTTkgMzlIMjlWMjlIMzlWOVEzOSA5IDM5IDlRMzkgOSAzOSA5SDlROSA5IDkgOVE5IDkgOSA5VjM5UTkgMzkgOSAzOVE5IDM5IDkgMzlaTTkgNDJRNy43NSA0MiA2Ljg3NSA0MS4xMjVRNiA0MC4yNSA2IDM5VjlRNiA3Ljc1IDYuODc1IDYuODc1UTcuNzUgNiA5IDZIMzlRNDAuMjUgNiA0MS4xMjUgNi44NzVRNDIgNy43NSA0MiA5VjMwTDMwIDQyWk0xNSAyN1YyNEgyMy41VjI3Wk0xNSAxOVYxNkgzM1YxOVpNOSAzOVYyOVY5UTkgOSA5IDlROSA5IDkgOVE5IDkgOSA5UTkgOSA5IDlWMzlROSAzOSA5IDM5UTkgMzkgOSAzOVoiLz48L3N2Zz4=");
+    var pageTlb = toolbarSvc
+      .Metadata(SiteDynCode.CmsContext.Page, "*")
+      .Metadata(SiteDynCode.CmsContext.Page, "PageMetadata")
+      .Metadata(SiteDynCode.CmsContext.Page, "dummy", ui: "color=D9CA1F")
+      .Metadata(SiteDynCode.CmsContext.Page, "NoteDecorator", ui: "color=D9CA1F&icon=svg:PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHdpZHRoPSI0OCI+PHBhdGggZD0iTTkgMzlIMjlWMjlIMzlWOVEzOSA5IDM5IDlRMzkgOSAzOSA5SDlROSA5IDkgOVE5IDkgOSA5VjM5UTkgMzkgOSAzOVE5IDM5IDkgMzlaTTkgNDJRNy43NSA0MiA2Ljg3NSA0MS4xMjVRNiA0MC4yNSA2IDM5VjlRNiA3Ljc1IDYuODc1IDYuODc1UTcuNzUgNiA5IDZIMzlRNDAuMjUgNiA0MS4xMjUgNi44NzVRNDIgNy43NSA0MiA5VjMwTDMwIDQyWk0xNSAyN1YyNEgyMy41VjI3Wk0xNSAxOVYxNkgzM1YxOVpNOSAzOVYyOVY5UTkgOSA5IDlROSA5IDkgOVE5IDkgOSA5UTkgOSA5IDlWMzlROSAzOSA5IDM5UTkgMzkgOSAzOVoiLz48L3N2Zz4=");;
     return SiteDynCode.Edit.Toolbar(pageTlb);
   }
 
@@ -47,22 +51,6 @@
     pageSvc.Activate("fancybox4");
   }
 </script>
-MDEntityId: <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %>
-<br>
-Typeof: <%= this.GetType().BaseType.BaseType %>
-<hr>
-Toolbar: <%= SiteDynCode.Edit.Enabled %>
-<hr>
-Page: <%# SiteDynCode.CmsContext.Page.Id %> / <%# SiteDynCode.CmsContext.Page.Url %> / <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %> 
- / Icon: <%# (SiteDynCode.CmsContext.Page.Metadata as dynamic).Icon %>
-
-<hr>
-Toolbar: <%= PageToolbar() %>
-
-<br>
-<br>
-<br>
-<hr>
 <%-- end --%>
 
 <a class="visually-hidden-focusable" rel="nofollow" href="#to-shine-page-main"><%= LocalizeString("SkipLink.MainContent") %></a>
@@ -71,6 +59,7 @@ Toolbar: <%= PageToolbar() %>
     <a class="logo" href="<%= DotNetNuke.Common.Globals.NavigateURL(PortalController.GetCurrentPortalSettings().HomeTabId) %>" title="2shine DNN BS5 2sxc (change this in the theme-body.ascx)">			
       <img alt="Logo" class="img-fluid" src="<%=SkinPath%>images/logo.svg">
     </a>
+    <%= PageToolbar() %>
     <div class="to-shine-mobile-hamburger" data-bs-toggle="offcanvas" data-bs-target="#offcanvasStart" aria-controls="offcanvasStart" title="Menu">
       <div>
         <span></span>
@@ -230,3 +219,11 @@ Toolbar: <%= PageToolbar() %>
 </script>
 
 
+MDEntityId: <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %>
+<br>
+Typeof: <%= this.GetType().BaseType.BaseType %>
+<hr>
+Toolbar: <%= SiteDynCode.Edit.Enabled %>
+<hr>
+Page: <%# SiteDynCode.CmsContext.Page.Id %> / <%# SiteDynCode.CmsContext.Page.Url %> / <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %> 
+ / Icon: <%# (SiteDynCode.CmsContext.Page.Metadata as dynamic).Icon %>
