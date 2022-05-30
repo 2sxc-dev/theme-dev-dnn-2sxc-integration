@@ -50,6 +50,10 @@
 
     pageSvc.Activate("fancybox4");
   }
+
+  private IRenderService GetRenderService() {
+    return this.GetService<IRenderService>();
+  }
 </script>
 <%-- end --%>
 
@@ -161,6 +165,12 @@
   </a>
 </main>
 <footer id="to-shine-page-footer">
+  <asp:Panel id="ModulesInFooter" runat="server" Visible="<%# ShowModulesInFooter %>">
+    <%= this.GetService<IRenderService>().Module(5279, 11228) %>
+    <hr>
+    <%= this.GetService<IRenderService>().Module(5279, 11229) %>
+  </asp:Panel>
+
   <div class="container py-4 d-flex justify-content-md-between flex-column flex-md-row text-white">
     <ul class="to-shine-footer-address" itemscope itemtype="http://schema.org/LocalBusiness">
       <li>
