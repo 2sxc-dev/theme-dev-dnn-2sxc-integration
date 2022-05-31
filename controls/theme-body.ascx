@@ -23,38 +23,56 @@
 <%@ Register TagPrefix="tosic" TagName="SxcQuickEdit" src="2sxc-quickedit.ascx" %>
 <tosic:SxcQuickEdit runat="server" />
 
-
-<%-- New code to use 2sxc --%>
-<%@ Import Namespace="ToSic.Sxc.Dnn" %>
+<%-- This has all common 2sxc services and GetScopedService(...)  --%>
 <%@ Import Namespace="ToSic.Sxc.Services" %>
-<%@ Import Namespace="ToSic.Sxc.Code" %>
-<%@ Import Namespace="System.Linq" %>
 <script runat="server">
-  protected IDynamicCode SiteDynCode { get { return _siteDynCode ?? (_siteDynCode = this.GetService<IDynamicCodeService>().OfSite()); } }
-  private IDynamicCode _siteDynCode;
+  public int ToSafeInt(object value) {
+    return this.GetScopedService<IConvertService>().ToInt(value, 0);
+  }
+</script>
 
+<%-- This has all common 2sxc services and GetScopedService(...)  --%>
+<%@ Import Namespace="ToSic.Sxc.Services" %>
+<%-- This namespace provides IDynamicCode --%>
+<%@ Import Namespace="ToSic.Sxc.Code" %>
+<script runat="server">
+  // Get the Dynamic Code of this Site = OfSite() and keep for re-use
+  protected IDynamicCode SiteDynCode { 
+    get { return _sdc ?? (_sdc = this.GetScopedService<IDynamicCodeService>().OfSite()); } 
+  }
+  private IDynamicCode _sdc;
+
+  // Shorthand to Get a service using the SiteDynCode 
+  // this will add context to services which need it
+  protected T GetService<T>() {
+    return SiteDynCode.GetService<T>();
+  }
+
+  // Get the PageToolbar to show somewhere using <%= PageToolbar() %>
   private object PageToolbar() {
-    var toolbarSvc = this.GetService<IToolbarService>();
-    var pageTlb = toolbarSvc
-      .Metadata(SiteDynCode.CmsContext.Page, "*")
-      .Metadata(SiteDynCode.CmsContext.Page, "PageMetadata")
-      .Metadata(SiteDynCode.CmsContext.Page, "dummy", ui: "color=D9CA1F")
-      .Metadata(SiteDynCode.CmsContext.Page, "NoteDecorator", ui: "color=D9CA1F&icon=svg:PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHdpZHRoPSI0OCI+PHBhdGggZD0iTTkgMzlIMjlWMjlIMzlWOVEzOSA5IDM5IDlRMzkgOSAzOSA5SDlROSA5IDkgOVE5IDkgOSA5VjM5UTkgMzkgOSAzOVE5IDM5IDkgMzlaTTkgNDJRNy43NSA0MiA2Ljg3NSA0MS4xMjVRNiA0MC4yNSA2IDM5VjlRNiA3Ljc1IDYuODc1IDYuODc1UTcuNzUgNiA5IDZIMzlRNDAuMjUgNiA0MS4xMjUgNi44NzVRNDIgNy43NSA0MiA5VjMwTDMwIDQyWk0xNSAyN1YyNEgyMy41VjI3Wk0xNSAxOVYxNkgzM1YxOVpNOSAzOVYyOVY5UTkgOSA5IDlROSA5IDkgOVE5IDkgOSA5UTkgOSA5IDlWMzlROSAzOSA5IDM5UTkgMzkgOSAzOVoiLz48L3N2Zz4=");;
+    // Use GetService of the SiteDynCode so it can give the service more context
+    var toolbarSvc = GetService<IToolbarService>();
+    var page = SiteDynCode.CmsContext.Page;
+    var pageTlb = toolbarSvc.Metadata(page);
     return SiteDynCode.Edit.Toolbar(pageTlb);
   }
 
+  // Apply OpenGraph settings of the page
   private void SetOpenGraph() {
+    // Use GetService of the SiteDynCode so it can give the service more context
+    var pageSvc = GetService<IPageService>();
     var pageMd = SiteDynCode.CmsContext.Page.Metadata as dynamic;
-    var pageSvc = SiteDynCode.GetService<IPageService>();
-    pageSvc.AddOpenGraph("og:title", pageMd.Title);
+    pageSvc.AddOpenGraph("og:type", pageMd.OgType);
+    pageSvc.AddOpenGraph("og:title", pageMd.OgTitle);
 
+    // Activate fancybox on all pages
     pageSvc.Activate("fancybox4");
   }
-
-  private IRenderService GetRenderService() {
-    return this.GetService<IRenderService>();
-  }
 </script>
+
+
+<%@ Import Namespace="System.Linq" %>
+
 <%-- end --%>
 
 <a class="visually-hidden-focusable" rel="nofollow" href="#to-shine-page-main"><%= LocalizeString("SkipLink.MainContent") %></a>
@@ -166,9 +184,11 @@
 </main>
 <footer id="to-shine-page-footer">
   <asp:Panel id="ModulesInFooter" runat="server" Visible="<%# ShowModulesInFooter %>">
-    <%= this.GetService<IRenderService>().Module(5279, 11228) %>
+    <%@ Import Namespace="ToSic.Sxc.Dnn" %>
+    <%@ Import Namespace="ToSic.Sxc.Services" %>
+    <%= this.GetScopedService<IRenderService>().Module(5279, 11228) %>
     <hr>
-    <%= this.GetService<IRenderService>().Module(5279, 11229) %>
+    <%= this.GetScopedService<IRenderService>().Module(5279, 11229) %>
   </asp:Panel>
 
   <div class="container py-4 d-flex justify-content-md-between flex-column flex-md-row text-white">
