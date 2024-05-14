@@ -42,25 +42,25 @@
   }
   private IDynamicCode _sdc;
 
-  // Shorthand to Get a service using the SiteDynCode 
+  <%-- // Shorthand to Get a service using the SiteDynCode 
   // this will add context to services which need it
   protected T GetService<T>() {
     return SiteDynCode.GetService<T>();
-  }
+  } --%>
 
   // Get the PageToolbar to show somewhere using <%= PageToolbar() %>
   private object PageToolbar() {
     // Use GetService of the SiteDynCode so it can give the service more context
-    var toolbarSvc = GetService<IToolbarService>();
+    var toolbarSvc = SiteDynCode.GetService<IToolbarService>();
     var page = SiteDynCode.CmsContext.Page;
     var pageTlb = toolbarSvc.Metadata(page);
-    return SiteDynCode.Edit.Toolbar(pageTlb);
+    return pageTlb.AsTag();
   }
 
   // Apply OpenGraph settings of the page
   private void SetOpenGraph() {
     // Use GetService of the SiteDynCode so it can give the service more context
-    var pageSvc = GetService<IPageService>();
+    var pageSvc = SiteDynCode.GetService<IPageService>();
     var pageMd = SiteDynCode.CmsContext.Page.Metadata as dynamic;
     pageSvc.AddOpenGraph("og:type", pageMd.OgType);
     pageSvc.AddOpenGraph("og:title", pageMd.OgTitle);
