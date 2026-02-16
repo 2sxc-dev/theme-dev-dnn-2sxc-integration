@@ -126,19 +126,13 @@
       <dnn:BREADCRUMB runat="server" aria-current="page" Separator="<span>&nbsp;&rsaquo;&nbsp;</span>" CssClass="to-shine-page-breadcrumb-link" RootLevel="0" />
     </div>		
   </div>
-  <% 
-  if(ShowSidebarNavigation) {
-  %>
+  <% if (ShowSidebarNavigation) { %>
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-lg-9 order-lg-2 ly-col-contentpane">
-  <%
-  }
-  %>
+  <% } %>
         <div id="ContentPane" runat="server" containertype="G" containername="2shine BS5" containersrc="default.ascx"></div>
-  <% 
-  if(ShowSidebarNavigation) {
-  %>        
+  <% if (ShowSidebarNavigation) { %>        
       </div>
       <div class="col-xs-12 col-lg-3 order-lg-1 ly-col-leftpane">
         <div id="nav-sub" class="d-none d-sm-block">  
@@ -147,9 +141,7 @@
       </div>
     </div>
   </div>
-  <%
-  }
-  %>
+  <% } %>
   <a id="to-shine-to-top" href="#" title="Nach oben" rel="nofollow">
     <svg xmlns="http://www.w3.org/2000/svg" width="19.032" height="20.034" viewBox="0 0 19.032 20.034">
       <g id="Group_2" data-name="Group 2" transform="translate(-1055.984 -551.276)">
