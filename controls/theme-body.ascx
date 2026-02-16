@@ -25,11 +25,7 @@
 
 <%-- This has all common 2sxc services and GetScopedService(...)  --%>
 <%@ Import Namespace="ToSic.Sxc.Services" %>
-<script runat="server">
-  public int ToSafeInt(object value) {
-    return this.GetScopedService<IConvertService>().ToInt(value, 0);
-  }
-</script>
+
 
 <%-- This has all common 2sxc services and GetScopedService(...)  --%>
 <%@ Import Namespace="ToSic.Sxc.Services" %>
@@ -37,10 +33,10 @@
 <%@ Import Namespace="ToSic.Sxc.Code" %>
 <script runat="server">
   // Get the Dynamic Code of this Site = OfSite() and keep for re-use
-  protected IDynamicCode SiteDynCode { 
+  protected IDynamicCode12 SiteDynCode { 
     get { return _sdc ?? (_sdc = this.GetScopedService<IDynamicCodeService>().OfSite()); } 
   }
-  private IDynamicCode _sdc;
+  private IDynamicCode12 _sdc;
 
   <%-- // Shorthand to Get a service using the SiteDynCode 
   // this will add context to services which need it
@@ -61,9 +57,9 @@
   private void SetOpenGraph() {
     // Use GetService of the SiteDynCode so it can give the service more context
     var pageSvc = SiteDynCode.GetService<IPageService>();
-    var pageMd = SiteDynCode.CmsContext.Page.Metadata as dynamic;
-    pageSvc.AddOpenGraph("og:type", pageMd.OgType);
-    pageSvc.AddOpenGraph("og:title", pageMd.OgTitle);
+    var pageMd = SiteDynCode.CmsContext.Page.Metadata;
+    pageSvc.AddOpenGraph("og:type", pageMd.String("OgType"));
+    pageSvc.AddOpenGraph("og:title", pageMd.String("OgTitle"));
 
     // Activate fancybox on all pages
     pageSvc.Activate("fancybox4");
@@ -238,22 +234,35 @@
     // How to create best-practice FavIcons: https://azing.org/dnn-community/r/UhgWJbxh
     // ToSic.Razor.Blade.HtmlPage.AddIconSet(SkinPath + "favicon.png");
   }
-  protected void AttachExternalCSS(string CSSPath) { AttachCustomHeader("<link type='text/css' rel='stylesheet' href='" + CSSPath + "' />"); }
-  protected void AttachExternalJS(string JSPath) { AttachCustomHeader("<script type='text/javascript' src='" + JSPath + "'></scr" + "ipt>"); }
-  protected void AttachCustomHeader(string CustomHeader) { HtmlHead HtmlHead = (HtmlHead)Page.FindControl("Head"); if ((HtmlHead != null)) { HtmlHead.Controls.Add(new LiteralControl(CustomHeader));	}	}
+  protected void AttachExternalCSS(string CSSPath) {
+    AttachCustomHeader("<link type='text/css' rel='stylesheet' href='" + CSSPath + "' />");
+  }
+  protected void AttachExternalJS(string JSPath) {
+    AttachCustomHeader("<script type='text/javascript' src='" + JSPath + "'></scr" + "ipt>");
+  }
+  protected void AttachCustomHeader(string CustomHeader) {
+    HtmlHead HtmlHead = (HtmlHead)Page.FindControl("Head");
+    if ((HtmlHead != null)) {
+      HtmlHead.Controls.Add(new LiteralControl(CustomHeader));
+    }
+  }
 
   protected string LocalizeString(string key)
   {
-      return Localization.GetString(key, Localization.GetResourceFile(this, System.IO.Path.GetFileName(this.AppRelativeVirtualPath)));
+    return Localization.GetString(key, Localization.GetResourceFile(this, System.IO.Path.GetFileName(this.AppRelativeVirtualPath)));
   }
 </script>
 
+<hr>
+<h2>Debug Infos</h2>
 
-MDEntityId: <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %>
+MDEntityId: <%= SiteDynCode.CmsContext.Page.Metadata.GetAll().FirstOrDefault()?.EntityId %>
 <br>
 Typeof: <%= this.GetType().BaseType.BaseType %>
 <hr>
 Toolbar: <%= SiteDynCode.Edit.Enabled %>
 <hr>
-Page: <%# SiteDynCode.CmsContext.Page.Id %> / <%# SiteDynCode.CmsContext.Page.Url %> / <%= SiteDynCode.CmsContext.Page.Metadata.EntityId %> 
- / Icon: <%# (SiteDynCode.CmsContext.Page.Metadata as dynamic).Icon %>
+Page: <%# SiteDynCode.CmsContext.Page.Id %>
+ / <%# SiteDynCode.CmsContext.Page.Url %>
+ / <%= SiteDynCode.CmsContext.Page.Metadata.GetAll().FirstOrDefault()?.EntityId %> 
+ / Icon: <%# (SiteDynCode.CmsContext.Page.Metadata.String("Icon")) %>
