@@ -33,31 +33,24 @@
 <%@ Import Namespace="ToSic.Sxc.Code" %>
 <script runat="server">
   // Get the Dynamic Code of this Site = OfSite() and keep for re-use
-  protected IDynamicCode12 SiteDynCode { 
-    get { return _sdc ?? (_sdc = this.GetScopedService<IDynamicCodeService>().OfSite()); } 
+  protected ITypedApi SxcSiteApi { 
+    get { return _sdc ?? (_sdc = this.GetScopedService<ITypedApiService>().ApiOfSite()); } 
   }
-  private IDynamicCode12 _sdc;
-
-  <%-- // Shorthand to Get a service using the SiteDynCode 
-  // this will add context to services which need it
-  protected T GetService<T>() {
-    return SiteDynCode.GetService<T>();
-  } --%>
+  private ITypedApi _sdc;
 
   // Get the PageToolbar to show somewhere using <%= PageToolbar() %>
   private object PageToolbar() {
-    // Use GetService of the SiteDynCode so it can give the service more context
-    var toolbarSvc = SiteDynCode.GetService<IToolbarService>();
-    var page = SiteDynCode.CmsContext.Page;
-    var pageTlb = toolbarSvc.Metadata(page);
+    // Use GetService of the SxcSiteApi so it can give the service more context
+    var toolbarSvc = SxcSiteApi.GetService<IToolbarService>();
+    var pageTlb = toolbarSvc.Metadata(SxcSiteApi.MyPage);
     return pageTlb.AsTag();
   }
 
   // Apply OpenGraph settings of the page
   private void SetOpenGraph() {
-    // Use GetService of the SiteDynCode so it can give the service more context
-    var pageSvc = SiteDynCode.GetService<IPageService>();
-    var pageMd = SiteDynCode.CmsContext.Page.Metadata;
+    // Use GetService of the SxcSiteApi so it can give the service more context
+    var pageSvc = SxcSiteApi.GetService<IPageService>();
+    var pageMd = SxcSiteApi.MyPage.Metadata;
     pageSvc.AddOpenGraph("og:type", pageMd.String("OgType"));
     pageSvc.AddOpenGraph("og:title", pageMd.String("OgTitle"));
 
@@ -256,13 +249,13 @@
 <hr>
 <h2>Debug Infos</h2>
 
-MDEntityId: <%= SiteDynCode.CmsContext.Page.Metadata.GetAll().FirstOrDefault()?.EntityId %>
+MDEntityId: <%= SxcSiteApi.MyPage.Metadata.GetAll().FirstOrDefault()?.EntityId %>
 <br>
 Typeof: <%= this.GetType().BaseType.BaseType %>
 <hr>
-Toolbar: <%= SiteDynCode.Edit.Enabled %>
+Toolbar: <%= SxcSiteApi.Kit.Edit.Enabled %>
 <hr>
-Page: <%# SiteDynCode.CmsContext.Page.Id %>
- / <%# SiteDynCode.CmsContext.Page.Url %>
- / <%= SiteDynCode.CmsContext.Page.Metadata.GetAll().FirstOrDefault()?.EntityId %> 
- / Icon: <%# (SiteDynCode.CmsContext.Page.Metadata.String("Icon")) %>
+Page: <%# SxcSiteApi.MyPage.Id %>
+ / <%# SxcSiteApi.MyPage.Url %>
+ / <%= SxcSiteApi.MyPage.Metadata.GetAll().FirstOrDefault()?.EntityId %> 
+ / Icon: <%# (SxcSiteApi.MyPage.Metadata.String("Icon")) %>
