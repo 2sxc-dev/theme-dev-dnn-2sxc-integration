@@ -6,6 +6,12 @@
   This is important, because otherwise Dnn won't detect the panes in here
 --%>
 
+<%-- This has all common 2sxc services and GetScopedService(...)  --%>
+<%@ Import Namespace="ToSic.Sxc.Services" %>
+<%-- This namespace provides IDynamicCode --%>
+<%@ Import Namespace="ToSic.Sxc.Code" %>
+
+
 <%@ Control language="C#" AutoEventWireup="false" Explicit="True" Inherits="DotNetNuke.UI.Skins.Skin" %>
 <%@ Register TagPrefix="dnn" TagName="LOGIN" Src="~/Admin/Skins/Login.ascx" %>
 <%@ Register TagPrefix="dnn" Namespace="DotNetNuke.Web.DDRMenu.TemplateEngine" Assembly="DotNetNuke.Web.DDRMenu" %>
@@ -23,39 +29,21 @@
 <%@ Register TagPrefix="tosic" TagName="SxcQuickEdit" src="2sxc-quickedit.ascx" %>
 <tosic:SxcQuickEdit runat="server" />
 
-<%-- This has all common 2sxc services and GetScopedService(...)  --%>
-<%@ Import Namespace="ToSic.Sxc.Services" %>
-
-
-<%-- This has all common 2sxc services and GetScopedService(...)  --%>
-<%@ Import Namespace="ToSic.Sxc.Services" %>
-<%-- This namespace provides IDynamicCode --%>
-<%@ Import Namespace="ToSic.Sxc.Code" %>
 <script runat="server">
   // Get the Dynamic Code of this Site = OfSite() and keep for re-use
-  protected ITypedApi SxcSiteApi { 
-    get { return _sdc ?? (_sdc = this.GetScopedService<ITypedApiService>().ApiOfSite()); } 
-  }
-  private ITypedApi _sdc;
+  protected ITypedApi SxcSiteApi => _ssa ?? (_ssa = this.GetScopedService<ITypedApiService>().ApiOfSite());
+  private ITypedApi _ssa;
 
   // Get the PageToolbar to show somewhere using <%= PageToolbar() %>
-  private object PageToolbar() {
-    // Use GetService of the SxcSiteApi so it can give the service more context
-    var toolbarSvc = SxcSiteApi.GetService<IToolbarService>();
-    var pageTlb = toolbarSvc.Metadata(SxcSiteApi.MyPage);
-    return pageTlb.AsTag();
-  }
+  private object PageToolbar() =>
+    SxcSiteApi.Kit.Toolbar.Metadata(SxcSiteApi.MyPage).AsTag();
 
   // Apply OpenGraph settings of the page
   private void SetOpenGraph() {
-    // Use GetService of the SxcSiteApi so it can give the service more context
-    var pageSvc = SxcSiteApi.GetService<IPageService>();
+    var pageSvc = SxcSiteApi.Kit.Page;
     var pageMd = SxcSiteApi.MyPage.Metadata;
     pageSvc.AddOpenGraph("og:type", pageMd.String("OgType"));
     pageSvc.AddOpenGraph("og:title", pageMd.String("OgTitle"));
-
-    // Activate fancybox on all pages
-    pageSvc.Activate("fancybox4");
   }
 </script>
 
@@ -221,11 +209,9 @@
     AttachCustomHeader("<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no' />");
 
     SetOpenGraph();
-    // Set various FavIcon and Icon headers according to best practices
-    // The next line is disabled by default, because it requires RazorBlade to be installed.
-    // How to install RazorBlade 3: https://azing.org/dnn-community/r/zbh8JC5T
-    // How to create best-practice FavIcons: https://azing.org/dnn-community/r/UhgWJbxh
-    // ToSic.Razor.Blade.HtmlPage.AddIconSet(SkinPath + "favicon.png");
+
+    // Activate fancybox on all pages
+    SxcSiteApi.Kit.Page.Activate("fancybox4");
   }
   protected void AttachExternalCSS(string CSSPath) {
     AttachCustomHeader("<link type='text/css' rel='stylesheet' href='" + CSSPath + "' />");
